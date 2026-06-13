@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'GlobalAnalytics AI',
-  description: 'Análise inteligente de campanhas Meta Ads',
+  title: 'Global Analytics Intelligence',
+  description: 'Marketing Intelligence Platform — análise inteligente de campanhas Meta Ads',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

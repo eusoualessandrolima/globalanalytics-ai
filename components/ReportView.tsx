@@ -1,47 +1,75 @@
-import type { AnalysisReport } from '@/types/campaign'
+'use client'
+import { motion } from 'framer-motion'
+import type { AnalysisReport, CampaignRow } from '@/types/campaign'
 import MetricCards from './MetricCards'
 import AnomalyList from './AnomalyList'
-import { FileText, Clock } from 'lucide-react'
+import Charts from './Charts'
+import InsightHero from './InsightHero'
+import { Clock } from 'lucide-react'
 
 interface ReportViewProps {
   report: AnalysisReport
+  rows?: CampaignRow[]
   warnings?: string[]
 }
 
-export default function ReportView({ report, warnings }: ReportViewProps) {
+export default function ReportView({ report, rows = [], warnings }: ReportViewProps) {
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <FileText className="text-accent" size={24} />
-            <h2 className="text-2xl font-bold">Relatório de Análise</h2>
-          </div>
-          <div className="flex items-center gap-2 text-white/50 text-sm">
-            <Clock size={14} />
+    <div className="p-6 max-w-6xl mx-auto">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-between mb-6"
+      >
+        <div>
+          <h2 className="text-2xl font-bold text-white">Intelligence Report</h2>
+          <p className="text-white/40 text-sm mt-0.5">{report.periodo_analisado} · {report.total_campanhas} campanhas</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 text-white/30 text-xs">
+            <Clock size={12} />
             <span>{new Date(report.gerado_em).toLocaleString('pt-BR')}</span>
           </div>
         </div>
+      </motion.div>
 
-        {warnings && warnings.length > 0 && (
-          <div className="bg-warning/10 border border-warning/30 rounded-lg p-3 mb-4">
-            <p className="text-warning text-sm font-medium mb-1">Avisos do processamento:</p>
-            {warnings.map((w, i) => <p key={i} className="text-white/70 text-xs">{w}</p>)}
+      {/* Warnings */}
+      {warnings && warnings.filter(w => !w.includes('não mapeadas')).length > 0 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="glass rounded-xl p-3 mb-4 border-amber-500/20 bg-amber-500/5"
+        >
+          {warnings.filter(w => !w.includes('não mapeadas')).map((w, i) => (
+            <p key={i} className="text-amber-300/70 text-xs">⚠ {w}</p>
+          ))}
+        </motion.div>
+      )}
+
+      {/* Principal Descoberta */}
+      <InsightHero report={report} />
+
+      {/* KPIs */}
+      <MetricCards report={report} rows={rows} />
+
+      {/* Gráficos */}
+      {rows.length > 0 && <Charts rows={rows} report={report} />}
+
+      {/* Anomalias agrupadas */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-lg font-bold text-white">Anomalias Detectadas</h3>
+            <p className="text-white/40 text-sm">{report.anomalias.length} ocorrências agrupadas por tipo</p>
           </div>
-        )}
-
-        <div className="bg-secondary rounded-xl p-5 border border-white/5 mb-6">
-          <p className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-2">Resumo Executivo</p>
-          <p className="text-white/85 leading-relaxed">{report.resumo_executivo}</p>
         </div>
-
-        <MetricCards report={report} />
-      </div>
-
-      <div>
-        <h3 className="text-xl font-bold mb-4">Anomalias Detectadas</h3>
         <AnomalyList anomalias={report.anomalias} />
-      </div>
+      </motion.div>
     </div>
   )
 }

@@ -2,32 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --color-bg: #0D1B2A;
-  --color-secondary: #111F30;
-  --color-accent: #2D6AE0;
-  --color-success: #1D9E75;
-  --color-warning: #EF9F27;
-  --color-danger: #E24B4A;
-}
-
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
-  background-color: #0D1B2A;
-  color: #FFFFFF;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background:
+    radial-gradient(ellipse at top left, rgba(37,99,235,0.15) 0%, transparent 40%),
+    radial-gradient(ellipse at bottom right, rgba(59,130,246,0.10) 0%, transparent 40%),
+    #020817;
+  color: #F8FAFC;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  min-height: 100vh;
 }
 
-::-webkit-scrollbar {
-  width: 6px;
+.glass {
+  background: rgba(15,23,42,0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
 }
-::-webkit-scrollbar-track {
-  background: #0D1B2A;
+
+.glass-hover {
+  transition: all 0.2s ease;
 }
-::-webkit-scrollbar-thumb {
-  background: #2D6AE0;
-  border-radius: 3px;
+.glass-hover:hover {
+  background: rgba(15,23,42,0.90);
+  border-color: rgba(59,130,246,0.3);
+  box-shadow: 0 0 20px rgba(59,130,246,0.1);
+}
+
+.glow-blue {
+  box-shadow: 0 0 30px rgba(59,130,246,0.15), 0 0 60px rgba(59,130,246,0.05);
+}
+
+.glow-text {
+  text-shadow: 0 0 30px rgba(96,165,250,0.5);
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.3); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(59,130,246,0.5); }
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 50%, #818CF8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .border-gradient {
+    border: 1px solid transparent;
+    background: linear-gradient(rgba(15,23,42,0.9), rgba(15,23,42,0.9)) padding-box,
+                linear-gradient(135deg, rgba(59,130,246,0.5), rgba(129,140,248,0.3)) border-box;
+  }
 }

@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       report,
+      rows: parsed.data,
       meta: parsed.meta,
       warnings: parsed.errors
     })
