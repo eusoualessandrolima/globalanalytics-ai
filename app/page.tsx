@@ -14,10 +14,12 @@ export default function Home() {
   const [report, setReport] = useState<AnalysisReport | null>(null)
   const [warnings, setWarnings] = useState<string[]>([])
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [errorDetails, setErrorDetails] = useState<string[]>([])
 
   const handleFileSelect = useCallback(async (file: File) => {
     setAppState('loading')
     setErrorMsg(null)
+    setErrorDetails([])
     setReport(null)
 
     try {
@@ -34,6 +36,7 @@ export default function Home() {
 
       if (!response.ok) {
         setErrorMsg(data.error || 'Erro ao processar análise')
+        setErrorDetails(data.details ?? [])
         setAppState('error')
         return
       }
@@ -54,6 +57,7 @@ export default function Home() {
     setReport(null)
     setWarnings([])
     setErrorMsg(null)
+    setErrorDetails([])
     setActiveTab('upload')
   }
 
@@ -71,6 +75,16 @@ export default function Home() {
             </div>
             <h2 className="text-xl font-bold text-danger">Erro na análise</h2>
             <p className="text-white/60 text-center max-w-md">{errorMsg}</p>
+            {errorDetails.length > 0 && (
+              <div className="bg-secondary border border-danger/20 rounded-xl p-4 max-w-lg w-full">
+                <p className="text-white/40 text-xs font-semibold uppercase mb-2">Detalhes</p>
+                <ul className="space-y-1">
+                  {errorDetails.map((d, i) => (
+                    <li key={i} className="text-white/70 text-sm">• {d}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <button
               onClick={handleReset}
               className="bg-accent hover:bg-accent/80 text-white px-6 py-3 rounded-xl font-medium transition-colors"
