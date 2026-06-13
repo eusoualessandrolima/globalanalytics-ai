@@ -1,27 +1,39 @@
 'use client'
 import { motion } from 'framer-motion'
-import { BarChart3, Upload, FileText, Zap, TrendingUp, Activity, Bot, Settings } from 'lucide-react'
+import { BarChart3, Upload, LayoutDashboard, Bot, Settings, Activity } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-
-const navItems = [
-  { id: 'upload', label: 'Importar Dados', icon: Upload, desc: 'Enviar CSV', href: '/' },
-  { id: 'report', label: 'Intelligence', icon: TrendingUp, desc: 'Relatório Executivo', href: '/' },
-  { id: 'anomalies', label: 'Anomalias', icon: Zap, desc: 'Problemas Detectados', href: '/' },
-]
-
-const navItemsNew = [
-  { label: 'Análise ao Vivo', icon: Bot, desc: 'IA + Meta Ads', href: '/live' },
-  { label: 'Configurações', icon: Settings, desc: 'Chaves de API & Integrações', href: '/settings' },
-]
 
 interface SidebarProps {
   activeTab?: string
   onTabChange?: (tab: string) => void
+  hasReport?: boolean
 }
 
-export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
+export default function Sidebar({ activeTab, onTabChange, hasReport = false }: SidebarProps) {
   const pathname = usePathname()
+  const isHome = pathname === '/'
+
+  const homeItems = [
+    {
+      id: 'upload',
+      label: 'Importar Dados',
+      icon: Upload,
+      desc: 'Enviar CSV',
+    },
+    {
+      id: 'report',
+      label: 'Relatórios',
+      icon: LayoutDashboard,
+      desc: 'Inteligência & Anomalias',
+      disabled: !hasReport,
+    },
+  ]
+
+  const platformItems = [
+    { label: 'Análise ao Vivo', icon: Bot, desc: 'IA + Meta Ads', href: '/live', badge: 'NOVO' },
+    { label: 'Configurações', icon: Settings, desc: 'Chaves de API & Integrações', href: '/settings' },
+  ]
 
   return (
     <aside className="w-64 min-h-screen flex flex-col border-r border-white/[0.06] bg-[#020817]">
@@ -48,52 +60,62 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
         </div>
       </div>
 
-      {/* Nav principal (Upload/Report/Anomalias — só na home) */}
+      {/* Nav */}
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-        {pathname === '/' && (
+
+        {/* Itens da home (só quando pathname === '/') */}
+        {isHome && (
           <>
             <p className="text-[10px] text-white/30 font-semibold uppercase tracking-widest px-3 py-2">Análise por Planilha</p>
-            {navItems.map(({ id, label, icon: Icon, desc }) => (
-              <motion.button
-                key={id}
-                onClick={() => onTabChange?.(id)}
-                whileHover={{ x: 4 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-left group ${
-                  activeTab === id
-                    ? 'bg-blue-500/10 border border-blue-500/20 text-blue-400'
-                    : 'text-white/40 hover:text-white/80 hover:bg-white/[0.04]'
-                }`}
-              >
-                <div className={`p-1.5 rounded-lg ${activeTab === id ? 'bg-blue-500/20' : 'bg-white/5 group-hover:bg-white/10'}`}>
-                  <Icon size={15} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium leading-tight">{label}</p>
-                  <p className={`text-[10px] leading-tight ${activeTab === id ? 'text-blue-400/60' : 'text-white/30'}`}>{desc}</p>
-                </div>
-                {activeTab === id && <div className="w-1 h-4 rounded-full bg-blue-500" />}
-              </motion.button>
-            ))}
+            {homeItems.map(({ id, label, icon: Icon, desc, disabled }) => {
+              const isActive = activeTab === id
+              return (
+                <motion.button
+                  key={id}
+                  onClick={() => !disabled && onTabChange?.(id)}
+                  whileHover={!disabled ? { x: 4 } : {}}
+                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  disabled={disabled}
+                  title={disabled ? 'Importe uma planilha primeiro' : undefined}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-left group ${
+                    isActive
+                      ? 'bg-blue-500/10 border border-blue-500/20 text-blue-400'
+                      : disabled
+                      ? 'text-white/20 cursor-not-allowed'
+                      : 'text-white/40 hover:text-white/80 hover:bg-white/[0.04]'
+                  }`}
+                >
+                  <div className={`p-1.5 rounded-lg ${isActive ? 'bg-blue-500/20' : 'bg-white/5 group-hover:bg-white/10'}`}>
+                    <Icon size={15} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium leading-tight">{label}</p>
+                    <p className={`text-[10px] leading-tight ${isActive ? 'text-blue-400/60' : 'text-white/30'}`}>{desc}</p>
+                  </div>
+                  {isActive && <div className="w-1 h-4 rounded-full bg-blue-500" />}
+                </motion.button>
+              )
+            })}
           </>
         )}
 
+        {/* Itens da plataforma */}
         <p className="text-[10px] text-white/30 font-semibold uppercase tracking-widest px-3 py-2 mt-2">Plataforma</p>
 
-        {/* Link para home */}
-        <Link href="/" className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-left group ${
-          pathname === '/' ? 'bg-blue-500/10 border border-blue-500/20 text-blue-400' : 'text-white/40 hover:text-white/80 hover:bg-white/[0.04]'
-        }`}>
-          <div className={`p-1.5 rounded-lg ${pathname === '/' ? 'bg-blue-500/20' : 'bg-white/5 group-hover:bg-white/10'}`}>
-            <FileText size={15} />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium">Dashboard</p>
-            <p className="text-[10px] text-white/30">Upload & Relatórios</p>
-          </div>
-        </Link>
+        {/* Quando não está na home, mostra link para a home */}
+        {!isHome && (
+          <Link href="/" className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/40 hover:text-white/80 hover:bg-white/[0.04] transition-all duration-200 text-left group">
+            <div className="p-1.5 rounded-lg bg-white/5 group-hover:bg-white/10">
+              <Upload size={15} />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium">Importar Dados</p>
+              <p className="text-[10px] text-white/30">Enviar CSV</p>
+            </div>
+          </Link>
+        )}
 
-        {navItemsNew.map(({ label, icon: Icon, desc, href }) => {
+        {platformItems.map(({ label, icon: Icon, desc, href, badge }) => {
           const isActive = pathname === href
           return (
             <Link key={href} href={href} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-left group ${
@@ -107,8 +129,8 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                 <p className={`text-[10px] ${isActive ? 'text-blue-400/60' : 'text-white/30'}`}>{desc}</p>
               </div>
               {isActive && <div className="w-1 h-4 rounded-full bg-blue-500" />}
-              {label === 'Análise ao Vivo' && (
-                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">NOVO</span>
+              {badge && (
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">{badge}</span>
               )}
             </Link>
           )

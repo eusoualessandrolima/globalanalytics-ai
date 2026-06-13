@@ -8,9 +8,10 @@ import LoadingState from '@/components/LoadingState'
 import type { AnalysisReport, CampaignRow } from '@/types/campaign'
 
 type AppState = 'idle' | 'loading' | 'done' | 'error'
+type ActiveTab = 'upload' | 'report'
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState('upload')
+  const [activeTab, setActiveTab] = useState<ActiveTab>('upload')
   const [appState, setAppState] = useState<AppState>('idle')
   const [report, setReport] = useState<AnalysisReport | null>(null)
   const [rows, setRows] = useState<CampaignRow[]>([])
@@ -68,9 +69,13 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar activeTab={activeTab} onTabChange={tab => {
-        if (appState === 'done') setActiveTab(tab)
-      }} />
+      <Sidebar
+        activeTab={activeTab}
+        hasReport={!!report}
+        onTabChange={tab => {
+          if (appState === 'done') setActiveTab(tab as ActiveTab)
+        }}
+      />
 
       <main className="flex-1 overflow-auto">
         <AnimatePresence mode="wait">
@@ -121,15 +126,15 @@ export default function Home() {
                 <div className="flex flex-col items-center justify-center min-h-screen gap-4">
                   <p className="text-white/50">Análise concluída!</p>
                   <button onClick={() => setActiveTab('report')} className="px-6 py-3 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-medium text-sm transition-colors">
-                    Ver Relatório
+                    Ver Relatórios
                   </button>
                   <button onClick={handleReset} className="text-white/30 hover:text-white/60 text-sm transition-colors">
                     Nova análise
                   </button>
                 </div>
               )}
-              {(activeTab === 'report' || activeTab === 'anomalies') && (
-                <ReportView report={report} rows={rows} warnings={warnings} activeTab={activeTab} />
+              {activeTab === 'report' && (
+                <ReportView report={report} rows={rows} warnings={warnings} />
               )}
             </motion.div>
           )}

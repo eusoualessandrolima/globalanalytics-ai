@@ -28,7 +28,6 @@ interface ReportViewProps {
   report: AnalysisReport
   rows?: CampaignRow[]
   warnings?: string[]
-  activeTab?: string
 }
 
 type SendStatus = 'idle' | 'sending' | 'sent' | 'error'
@@ -120,8 +119,10 @@ function NotifySection({ report }: { report: AnalysisReport }) {
   )
 }
 
-export default function ReportView({ report, rows = [], warnings, activeTab = 'report' }: ReportViewProps) {
-  const isAnomaliesTab = activeTab === 'anomalies'
+type InternalTab = 'intelligence' | 'anomalias'
+
+export default function ReportView({ report, rows = [], warnings }: ReportViewProps) {
+  const [tab, setTab] = useState<InternalTab>('intelligence')
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -132,14 +133,8 @@ export default function ReportView({ report, rows = [], warnings, activeTab = 'r
         className="flex items-center justify-between mb-6"
       >
         <div>
-          <h2 className="text-2xl font-bold text-white">
-            {isAnomaliesTab ? 'Anomalias Detectadas' : 'Intelligence Report'}
-          </h2>
-          <p className="text-white/40 text-sm mt-0.5">
-            {isAnomaliesTab
-              ? `${report.anomalias.length} ocorrências agrupadas por tipo · ${report.periodo_analisado}`
-              : `${report.periodo_analisado} · ${report.total_campanhas} campanhas`}
-          </p>
+          <h2 className="text-2xl font-bold text-white">Relatórios</h2>
+          <p className="text-white/40 text-sm mt-0.5">{report.periodo_analisado} · {report.total_campanhas} campanhas</p>
         </div>
         <div className="flex items-center gap-1.5 text-white/30 text-xs">
           <Clock size={12} />
@@ -147,18 +142,31 @@ export default function ReportView({ report, rows = [], warnings, activeTab = 'r
         </div>
       </motion.div>
 
-      {/* Aba: Anomalias */}
-      {isAnomaliesTab && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          <AnomalyList anomalias={report.anomalias} />
-          <NotifySection report={report} />
-        </motion.div>
-      )}
+      {/* Abas internas */}
+      <div className="flex gap-1 p-1 rounded-xl bg-white/[0.03] border border-white/[0.06] mb-6 w-fit">
+        {([['intelligence', 'Inteligência'], ['anomalias', 'Anomalias']] as [InternalTab, string][]).map(([id, label]) => (
+          <button
+            key={id}
+            onClick={() => setTab(id)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              tab === id
+                ? 'bg-blue-500/15 text-blue-400 border border-blue-500/20'
+                : 'text-white/40 hover:text-white/70'
+            }`}
+          >
+            {label}
+            {id === 'anomalias' && report.anomalias.filter(a => a.severidade === 'alta').length > 0 && (
+              <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/20">
+                {report.anomalias.filter(a => a.severidade === 'alta').length}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
 
-      {/* Aba: Intelligence (relatório completo) */}
-      {!isAnomaliesTab && (
+      {/* Aba: Inteligência */}
+      {tab === 'intelligence' && (
         <>
-          {/* Warnings */}
           {warnings && warnings.filter(w => !w.includes('não mapeadas')).length > 0 && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -170,12 +178,19 @@ export default function ReportView({ report, rows = [], warnings, activeTab = 'r
               ))}
             </motion.div>
           )}
-
           <InsightHero report={report} />
           <MetricCards report={report} rows={rows} />
           {rows.length > 0 && <Charts rows={rows} report={report} />}
           <NotifySection report={report} />
         </>
+      )}
+
+      {/* Aba: Anomalias */}
+      {tab === 'anomalias' && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+          <AnomalyList anomalias={report.anomalias} />
+          <NotifySection report={report} />
+        </motion.div>
       )}
     </div>
   )
