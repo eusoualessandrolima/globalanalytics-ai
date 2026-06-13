@@ -15,8 +15,9 @@ function normalize(str: string): string {
 const COLUMN_MAP: Record<string, string> = {
   // campanha
   campanha: 'campanha',
+  campanhanome: 'campanha',     // campanha_nome
   nomecampanha: 'campanha',
-  nomeda: 'campanha', // "Nome da Campanha"
+  nomeda: 'campanha',
   campaign: 'campanha',
   campaignname: 'campanha',
 
@@ -63,6 +64,7 @@ const COLUMN_MAP: Record<string, string> = {
   // CPC
   cpctodos: 'CPC',
   cpc: 'CPC',
+  cpclink: 'CPC',               // cpc_link
   custoportodos: 'CPC',
   custoporcliquelink: 'CPC',
 
@@ -73,16 +75,20 @@ const COLUMN_MAP: Record<string, string> = {
 
   // pagina_destino (cliques no link)
   paginadestino: 'pagina_destino',
+  visualizacoespaginadestino: 'pagina_destino',   // visualizacoes_pagina_destino
   cliquesnolink: 'pagina_destino',
   linkclicks: 'pagina_destino',
   cliqueslink: 'pagina_destino',
 
   // video
   visualizacoesvideo: 'video',
+  video3s: 'video',             // video_3s
+  thruplays: 'video',
   videoviews: 'video',
   video: 'video',
 
   // carrinho
+  adicoescarrinho: 'carrinho',  // adicoes_carrinho
   adicionosaocarrinho: 'carrinho',
   adicionaosaocarrinho: 'carrinho',
   addtocart: 'carrinho',
@@ -119,6 +125,7 @@ const COLUMN_MAP: Record<string, string> = {
   // custo_por_conversa
   custoporconversa: 'custo_por_conversa',
   custoporiniciodeconversa: 'custo_por_conversa',
+  conversasiniciadas: 'custo_por_conversa',       // conversas_iniciadas
   messagingconversationsstarted: 'custo_por_conversa',
   customensagem: 'custo_por_conversa',
   conversas: 'custo_por_conversa',
@@ -132,12 +139,20 @@ const NUMERIC_COLUMNS = [
 
 function cleanNumeric(value: unknown): number {
   if (value === null || value === undefined || value === '') return 0
-  const str = String(value)
+  let str = String(value)
     .replace(/R\$\s?/g, '')
     .replace(/\s/g, '')
     .replace('%', '')
-    .replace(/\./g, '') // separador de milhar BR
-    .replace(',', '.')  // decimal BR
+
+  if (str.includes(',') && str.includes('.')) {
+    // Formato BR: 1.234,56 → dot=milhar, comma=decimal
+    str = str.replace(/\./g, '').replace(',', '.')
+  } else if (str.includes(',') && !str.includes('.')) {
+    // Somente vírgula: é decimal (formato BR simples: 1,90)
+    str = str.replace(',', '.')
+  }
+  // Somente ponto (formato internacional): deixa como está
+
   const num = parseFloat(str)
   return isNaN(num) ? 0 : num
 }

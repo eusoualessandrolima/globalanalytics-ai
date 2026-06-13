@@ -109,7 +109,8 @@ export async function analyzeWithClaude(rows: CampaignRow[]): Promise<AnalysisRe
 
     validated.anomalias = validateAnomaliesAgainstData(validated.anomalias, rows)
     return validated
-  } catch {
+  } catch (err) {
+    console.error('[Claude] API falhou, usando fallback estatístico:', err instanceof Error ? err.message : err)
     return buildFallbackReport(rows)
   }
 }
@@ -126,7 +127,9 @@ function buildFallbackReport(rows: CampaignRow[]): AnalysisReport {
   const periodo = datas.length > 0 ? `${datas[0]} a ${datas[datas.length - 1]}` : 'N/A'
 
   const altaCount = anomalias.filter(a => a.severidade === 'alta').length
-  const score = Math.max(0, 100 - (altaCount * 20) - (anomalias.length * 5))
+  const mediaCount = anomalias.filter(a => a.severidade === 'media').length
+  // Score: penaliza alta (-10) e média (-5), mínimo 0
+  const score = Math.max(0, 100 - (altaCount * 10) - (mediaCount * 5))
 
   return {
     resumo_executivo: `Análise estatística de ${rows.length} registros de campanha. ${anomalias.length} anomalias detectadas via análise local (Claude API indisponível).`,
