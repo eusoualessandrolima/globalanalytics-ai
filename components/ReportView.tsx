@@ -34,20 +34,29 @@ type SendStatus = 'idle' | 'sending' | 'sent' | 'error'
 
 function NotifySection({ report }: { report: AnalysisReport }) {
   const [waStatus, setWaStatus] = useState<SendStatus>('idle')
+  const [waError, setWaError] = useState('')
 
   const sendWhatsApp = async () => {
     setWaStatus('sending')
+    setWaError('')
     try {
       const res = await fetch('/api/notify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ report }),
       })
-      setWaStatus(res.ok ? 'sent' : 'error')
+      const data = await res.json()
+      if (data.success) {
+        setWaStatus('sent')
+      } else {
+        setWaStatus('error')
+        setWaError(data.error ?? 'Falha no envio.')
+      }
     } catch {
       setWaStatus('error')
+      setWaError('Erro de rede ao tentar enviar.')
     }
-    setTimeout(() => setWaStatus('idle'), 4000)
+    setTimeout(() => setWaStatus('idle'), 5000)
   }
 
   const sendEmail = () => {
@@ -98,7 +107,13 @@ function NotifySection({ report }: { report: AnalysisReport }) {
           {waStatus === 'sent' && <CheckCircle2 size={15} />}
           {waStatus === 'error' && <XCircle size={15} />}
           {waStatus === 'idle' && <MessageCircle size={15} />}
-          {waStatus === 'sending' ? 'Enviando...' : waStatus === 'sent' ? 'Enviado!' : waStatus === 'error' ? 'Falhou' : 'WhatsApp'}
+          {waStatus === 'sending'
+            ? 'Enviando...'
+            : waStatus === 'sent'
+            ? 'Relatório enviado!'
+            : waStatus === 'error'
+            ? 'Não foi possível enviar'
+            : 'Enviar relatório via WhatsApp'}
         </button>
 
         <button
@@ -106,14 +121,19 @@ function NotifySection({ report }: { report: AnalysisReport }) {
           className="flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium hover:bg-blue-500/15 transition-all"
         >
           <Mail size={15} />
-          E-mail
+          Enviar relatório via E-mail
         </button>
       </div>
 
-      {waStatus === 'error' && (
-        <p className="text-red-400/70 text-xs mt-3">
-          WhatsApp não configurado. Adicione as variáveis <span className="font-mono">WHATSAPP_*</span> nas configurações do Vercel.
-        </p>
+      {waStatus === 'error' && waError && (
+        <div className="mt-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20">
+          <p className="text-red-400/80 text-xs">{waError}</p>
+          {waError.includes('não configuradas') && (
+            <p className="text-white/40 text-xs mt-1">
+              Configure as variáveis <span className="font-mono text-white/60">WHATSAPP_API_URL</span>, <span className="font-mono text-white/60">WHATSAPP_API_KEY</span>, <span className="font-mono text-white/60">WHATSAPP_INSTANCE</span> e <span className="font-mono text-white/60">WHATSAPP_NUMBER_DESTINO</span> no painel do Vercel.
+            </p>
+          )}
+        </div>
       )}
     </motion.div>
   )
