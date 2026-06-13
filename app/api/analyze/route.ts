@@ -4,9 +4,22 @@ import { analyzeWithClaude } from '@/lib/claude-analyzer'
 import { sendWhatsAppNotification } from '@/lib/whatsapp-notify'
 
 export const maxDuration = 30
+export const dynamic = 'force-dynamic'
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB — alinhado com validação client-side
 
 export async function POST(request: NextRequest) {
   try {
+    // Validação de Content-Length (defesa em profundidade — barra bodies grandes
+    // antes mesmo de ler o multipart, evitando OOM em payloads abusivos).
+    const contentLength = request.headers.get('content-length')
+    if (contentLength && parseInt(contentLength, 10) > MAX_FILE_SIZE + 1024) {
+      return NextResponse.json(
+        { error: 'Arquivo muito grande. Máximo: 10MB' },
+        { status: 413 }
+      )
+    }
+
     const formData = await request.formData()
     const file = formData.get('file') as File | null
 
@@ -14,8 +27,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Nenhum arquivo enviado' }, { status: 400 })
     }
 
-    if (!file.name.endsWith('.csv')) {
+    if (!file.name.toLowerCase().endsWith('.csv')) {
       return NextResponse.json({ error: 'Arquivo deve ser CSV' }, { status: 400 })
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: 'Arquivo muito grande. Máximo: 10MB' },
+        { status: 413 }
+      )
+    }
+
+    if (file.size === 0) {
+      return NextResponse.json({ error: 'Arquivo vazio' }, { status: 400 })
     }
 
     const content = await file.text()

@@ -98,7 +98,17 @@ export default function UploadArea({ onFileSelect, isLoading }: UploadAreaProps)
           onDragLeave={() => setIsDragging(false)}
           onDrop={onDrop}
           onClick={() => !isLoading && inputRef.current?.click()}
-          className={`relative rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 border-gradient ${
+          onKeyDown={e => {
+            if ((e.key === 'Enter' || e.key === ' ') && !isLoading) {
+              e.preventDefault()
+              inputRef.current?.click()
+            }
+          }}
+          role="button"
+          tabIndex={isLoading ? -1 : 0}
+          aria-label="Selecionar arquivo CSV do Meta Ads ou arrastar para esta área"
+          aria-disabled={isLoading}
+          className={`relative rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 border-gradient outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60 ${
             isDragging
               ? 'scale-[1.02] bg-blue-500/10'
               : 'hover:bg-white/[0.02]'
@@ -126,10 +136,11 @@ export default function UploadArea({ onFileSelect, isLoading }: UploadAreaProps)
           <input
             ref={inputRef}
             type="file"
-            accept=".csv"
+            accept=".csv,text/csv"
             onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f) }}
             className="hidden"
             disabled={isLoading}
+            aria-label="Upload de arquivo CSV"
           />
 
           <div className="relative z-10">

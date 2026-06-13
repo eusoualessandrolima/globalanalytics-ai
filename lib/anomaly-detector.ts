@@ -79,19 +79,33 @@ export function detectAnomaliesStatistical(rows: CampaignRow[]): Anomaly[] {
       }
     }
 
-    // Gasto sem conversão
-    const totalGasto = campaigns.reduce((s, c) => s + c.gasto, 0)
-    for (const camp of campaigns) {
-      if (camp.gasto > totalGasto * 0.2 && camp.compras === 0 && camp.custo_por_lead === 0) {
-        anomalies.push({
-          campanha: camp.campanha,
-          metrica: 'Gasto sem conversão',
-          valor_atual: camp.gasto,
-          valor_referencia: totalGasto * 0.2,
-          severidade: 'alta',
-          descricao: `Campanha consumiu ${((camp.gasto/totalGasto)*100).toFixed(0)}% do orçamento sem conversões`,
-          recomendacao: 'Pausar campanha imediatamente e revisar configurações de conversão'
-        })
+    // Gasto sem conversão — APENAS para objetivos onde "conversão" faz sentido.
+    // Campanhas de reconhecimento, alcance, tráfego e engajamento não têm como meta
+    // direta compras/leads, então gerariam falso positivo (FP) aqui.
+    const CONVERSION_OBJECTIVES = ['vendas', 'conversoes', 'conversao', 'leads', 'cadastros', 'mensagens', 'conversas']
+    const isConversionObjective = CONVERSION_OBJECTIVES.some(o => objetivo.includes(o))
+
+    if (isConversionObjective) {
+      const totalGasto = campaigns.reduce((s, c) => s + c.gasto, 0)
+      for (const camp of campaigns) {
+        // Considera "sem conversão" se zerou em todos os sinais de conversão (compras,
+        // leads e conversas) — assim cobrimos os 3 objetivos sem exigir compras p/ leads.
+        const semConversao =
+          camp.compras === 0 &&
+          camp.custo_por_lead === 0 &&
+          camp.custo_por_conversa === 0
+
+        if (camp.gasto > totalGasto * 0.2 && semConversao) {
+          anomalies.push({
+            campanha: camp.campanha,
+            metrica: 'Gasto sem conversão',
+            valor_atual: camp.gasto,
+            valor_referencia: totalGasto * 0.2,
+            severidade: 'alta',
+            descricao: `Campanha consumiu ${((camp.gasto/totalGasto)*100).toFixed(0)}% do orçamento sem conversões`,
+            recomendacao: 'Pausar campanha imediatamente e revisar configurações de conversão'
+          })
+        }
       }
     }
   }

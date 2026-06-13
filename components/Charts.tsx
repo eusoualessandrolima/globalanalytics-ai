@@ -1,4 +1,5 @@
 'use client'
+import { useMemo } from 'react'
 import { ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, PieChart, Pie, Cell, Legend } from 'recharts'
 import { motion } from 'framer-motion'
 import type { CampaignRow, AnalysisReport } from '@/types/campaign'
@@ -26,50 +27,67 @@ function ChartCard({ title, children }: { title: string; children: React.ReactNo
 }
 
 export default function Charts({ rows, report }: ChartsProps) {
-  // ROAS por campanha (média)
-  const roasByCampaign = Object.entries(
-    rows.reduce((acc, r) => {
-      if (!acc[r.campanha]) acc[r.campanha] = { sum: 0, count: 0 }
-      acc[r.campanha].sum += r.ROAS
-      acc[r.campanha].count += 1
-      return acc
-    }, {} as Record<string, { sum: number; count: number }>)
+  // Memoizar agregações pesadas: o componente re-renderiza em hover/animação
+  // dos cards vizinhos; sem useMemo, todos esses reduce/sort rodariam em cada render.
+  const roasByCampaign = useMemo(
+    () =>
+      Object.entries(
+        rows.reduce((acc, r) => {
+          if (!acc[r.campanha]) acc[r.campanha] = { sum: 0, count: 0 }
+          acc[r.campanha].sum += r.ROAS
+          acc[r.campanha].count += 1
+          return acc
+        }, {} as Record<string, { sum: number; count: number }>)
+      )
+        .map(([name, { sum, count }]) => ({
+          name: name.slice(0, 18),
+          roas: parseFloat((sum / count).toFixed(2)),
+        }))
+        .sort((a, b) => b.roas - a.roas)
+        .slice(0, 6),
+    [rows]
   )
-    .map(([name, { sum, count }]) => ({ name: name.slice(0, 18), roas: parseFloat((sum / count).toFixed(2)) }))
-    .sort((a, b) => b.roas - a.roas)
-    .slice(0, 6)
 
-  // Investimento por campanha
-  const spendByCampaign = Object.entries(
-    rows.reduce((acc, r) => {
-      if (!acc[r.campanha]) acc[r.campanha] = 0
-      acc[r.campanha] += r.gasto
-      return acc
-    }, {} as Record<string, number>)
+  const spendByCampaign = useMemo(
+    () =>
+      Object.entries(
+        rows.reduce((acc, r) => {
+          if (!acc[r.campanha]) acc[r.campanha] = 0
+          acc[r.campanha] += r.gasto
+          return acc
+        }, {} as Record<string, number>)
+      )
+        .map(([name, value]) => ({ name: name.slice(0, 18), value: parseFloat(value.toFixed(2)) }))
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 5),
+    [rows]
   )
-    .map(([name, value]) => ({ name: name.slice(0, 18), value: parseFloat(value.toFixed(2)) }))
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 5)
 
-  // Distribuição de severidade
-  const severityDist = [
-    { name: 'Alta', value: report.anomalias.filter(a => a.severidade === 'alta').length, color: '#EF4444' },
-    { name: 'Média', value: report.anomalias.filter(a => a.severidade === 'media').length, color: '#F59E0B' },
-    { name: 'Baixa', value: report.anomalias.filter(a => a.severidade === 'baixa').length, color: '#10B981' },
-  ].filter(d => d.value > 0)
-
-  // CTR ao longo do tempo (por data)
-  const ctrByDate = Object.entries(
-    rows.reduce((acc, r) => {
-      if (!acc[r.data]) acc[r.data] = { sum: 0, count: 0 }
-      acc[r.data].sum += r.CTR
-      acc[r.data].count += 1
-      return acc
-    }, {} as Record<string, { sum: number; count: number }>)
+  const severityDist = useMemo(
+    () =>
+      [
+        { name: 'Alta', value: report.anomalias.filter(a => a.severidade === 'alta').length, color: '#EF4444' },
+        { name: 'Média', value: report.anomalias.filter(a => a.severidade === 'media').length, color: '#F59E0B' },
+        { name: 'Baixa', value: report.anomalias.filter(a => a.severidade === 'baixa').length, color: '#10B981' },
+      ].filter(d => d.value > 0),
+    [report.anomalias]
   )
-    .map(([date, { sum, count }]) => ({ date: date.slice(5), ctr: parseFloat((sum / count).toFixed(2)) }))
-    .sort((a, b) => a.date.localeCompare(b.date))
-    .slice(-14)
+
+  const ctrByDate = useMemo(
+    () =>
+      Object.entries(
+        rows.reduce((acc, r) => {
+          if (!acc[r.data]) acc[r.data] = { sum: 0, count: 0 }
+          acc[r.data].sum += r.CTR
+          acc[r.data].count += 1
+          return acc
+        }, {} as Record<string, { sum: number; count: number }>)
+      )
+        .map(([date, { sum, count }]) => ({ date: date.slice(5), ctr: parseFloat((sum / count).toFixed(2)) }))
+        .sort((a, b) => a.date.localeCompare(b.date))
+        .slice(-14),
+    [rows]
+  )
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">

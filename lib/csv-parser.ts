@@ -167,6 +167,12 @@ export function parseCSV(content: string): ParsedCSV {
   const errors: string[] = []
   const warnings: string[] = []
 
+  // Edge case: conteúdo vazio ou só whitespace
+  if (!content || !content.trim()) {
+    errors.push('Arquivo CSV vazio.')
+    return { data: [], errors, meta: { totalRows: 0, validRows: 0, columns: [] } }
+  }
+
   const result = Papa.parse<Record<string, string>>(content, {
     header: true,
     skipEmptyLines: true,

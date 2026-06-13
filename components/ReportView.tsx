@@ -1,11 +1,28 @@
 'use client'
 import { motion } from 'framer-motion'
+import dynamic from 'next/dynamic'
 import type { AnalysisReport, CampaignRow } from '@/types/campaign'
 import MetricCards from './MetricCards'
 import AnomalyList from './AnomalyList'
-import Charts from './Charts'
-import InsightHero from './InsightHero'
 import { Clock } from 'lucide-react'
+
+// Heavy components carregados dinamicamente para reduzir bundle inicial.
+// Recharts (~80kB) e Framer-motion-heavy hero só carregam quando há report pronto.
+const Charts = dynamic(() => import('./Charts'), {
+  ssr: false,
+  loading: () => (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+      {[0, 1, 2, 3].map(i => (
+        <div key={i} className="glass rounded-xl p-5 h-[260px] animate-pulse bg-white/[0.02]" />
+      ))}
+    </div>
+  ),
+})
+
+const InsightHero = dynamic(() => import('./InsightHero'), {
+  ssr: false,
+  loading: () => <div className="glass rounded-2xl p-6 mb-6 h-[220px] animate-pulse bg-white/[0.02]" />,
+})
 
 interface ReportViewProps {
   report: AnalysisReport

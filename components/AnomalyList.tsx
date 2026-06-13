@@ -52,7 +52,10 @@ function AnomalyGroupCard({ group }: { group: AnomalyGroup }) {
     <div className={`glass rounded-xl border overflow-hidden ${bg}`}>
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors text-left"
+        type="button"
+        aria-expanded={open}
+        aria-label={`${open ? 'Recolher' : 'Expandir'} grupo ${group.label} (${group.items.length} ocorrências)`}
+        className="w-full flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
       >
         <div className="flex items-center gap-3">
           <div className={`p-2 rounded-lg bg-white/[0.04]`}>

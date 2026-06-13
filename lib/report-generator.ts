@@ -14,11 +14,11 @@ export function formatCurrency(value: number): string {
 
 export function formatWhatsAppMessage(report: AnalysisReport): string {
   const { alta, media, baixa } = groupAnomaliesBySeverity(report.anomalias)
-  const top3 = report.anomalias
-    .sort((a, b) => {
-      const order = { alta: 0, media: 1, baixa: 2 }
-      return order[a.severidade] - order[b.severidade]
-    })
+  // Cópia antes de ordenar — `sort` muta o array. Sem essa cópia, o array original
+  // de `report.anomalias` ficaria reordenado, afetando consumidores downstream.
+  const order: Record<'alta' | 'media' | 'baixa', number> = { alta: 0, media: 1, baixa: 2 }
+  const top3 = [...report.anomalias]
+    .sort((a, b) => order[a.severidade] - order[b.severidade])
     .slice(0, 3)
 
   const top3Text = top3.map((a, i) =>

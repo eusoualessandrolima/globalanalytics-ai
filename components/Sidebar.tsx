@@ -42,7 +42,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-3 space-y-1">
+      <nav className="flex-1 p-3 space-y-1" aria-label="Navegação principal">
         <p className="text-[10px] text-white/30 font-semibold uppercase tracking-widest px-3 py-2">Navigation</p>
         {navItems.map(({ id, label, icon: Icon, desc }) => (
           <motion.button
@@ -50,7 +50,10 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
             onClick={() => onTabChange(id)}
             whileHover={{ x: 4 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-left group ${
+            type="button"
+            aria-label={`${label} — ${desc}`}
+            aria-current={activeTab === id ? 'page' : undefined}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60 ${
               activeTab === id
                 ? 'bg-blue-500/10 border border-blue-500/20 text-blue-400'
                 : 'text-white/40 hover:text-white/80 hover:bg-white/[0.04]'
