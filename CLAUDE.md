@@ -110,3 +110,107 @@ WHATSAPP_NUMBER_DESTINO=5562...
 - ❌ Bloquear o response da análise esperando o WhatsApp (fire-and-forget)
 - ❌ Expor `ANTHROPIC_API_KEY` no client (usar apenas server-side)
 - ❌ Inflar o bundle do client com SDK do Anthropic (apenas em rotas server)
+
+---
+
+## REVISÃO ORTOGRÁFICA E PADRONIZAÇÃO DE TEXTO
+
+Antes de finalizar qualquer implementação, execute uma revisão completa de todos os textos visíveis ao usuário.
+
+Verificar:
+
+- Ortografia
+- Gramática
+- Concordância verbal
+- Concordância nominal
+- Acentuação
+- Pontuação
+- Pluralização
+- Capitalização
+- Consistência dos termos
+
+Corrigir automaticamente qualquer erro encontrado.
+
+---
+
+## PADRONIZAÇÃO DE UX WRITING
+
+Todos os textos da plataforma devem transmitir profissionalismo e padrão SaaS premium.
+
+Evitar:
+
+- Textos genéricos
+- Traduções literais
+- Frases mal construídas
+- Mensagens técnicas para usuários finais
+- Termos inconsistentes
+
+Exemplos:
+
+| ❌ Errado | ✅ Correto |
+|-----------|-----------|
+| "Campanha analisado" | "Campanha analisada" |
+| "Upload feito com sucesso" | "Arquivo enviado com sucesso." |
+| "Detected issues" | "Problemas detectados" |
+| "Import Data" | "Importar dados" |
+
+---
+
+## AUDITORIA COMPLETA DA INTERFACE
+
+Realizar varredura em todos os textos visíveis ao usuário, incluindo:
+
+- Sidebar e navegação
+- Dashboard principal
+- Relatórios e análises
+- Lista de anomalias
+- Área de upload
+- Página de configurações
+- Modais e overlays
+- Alertas e toasts
+- Mensagens de erro e sucesso
+- Estados vazios (empty states)
+- Tooltips e hints
+- Placeholders de campos
+- Rótulos de botões
+- Cabeçalhos de tabelas
+- Campos de formulário
+
+Corrigir qualquer erro ortográfico ou inconsistência encontrada.
+
+---
+
+## PADRONIZAÇÃO DE TERMINOLOGIA
+
+Utilizar sempre os mesmos termos em toda a plataforma. Nunca usar variações diferentes para o mesmo conceito.
+
+| Termo correto | Não usar |
+|---------------|----------|
+| Campanha | campaign, campanha(s) misturado |
+| Conjunto de anúncios | ad set, adset |
+| Anúncio | ad, criativo (apenas quando referir ao criativo visual) |
+| ROAS | Roas, roas |
+| CTR | Ctr, ctr |
+| CPA | Cpa, cpa |
+| Conversões | conversoes, conversão (no plural) |
+| Investimento | gasto (preferir "investimento" em contexto de resultado) |
+| Análise | analise (sem acento) |
+| Relatório | report (fora de contexto técnico) |
+| Anomalia | problema, issue |
+| Oportunidade | opportunity |
+
+---
+
+## QUALIDADE FINAL
+
+Nenhum texto da interface deve conter:
+
+- ❌ Erros ortográficos
+- ❌ Erros gramaticais
+- ❌ Textos quebrados ou truncados
+- ❌ Traduções incompletas ou literais
+- ❌ Mistura de português e inglês sem necessidade técnica
+
+A plataforma deve aparentar ter sido revisada por um UX Writer profissional.
+
+**Após concluir qualquer implementação, gerar um relatório listando todos os textos corrigidos, componentes revisados e inconsistências encontradas durante a auditoria da interface.**
