@@ -129,7 +129,7 @@ export default function Home() {
                 </div>
               )}
               {(activeTab === 'report' || activeTab === 'anomalies') && (
-                <ReportView report={report} rows={rows} warnings={warnings} />
+                <ReportView report={report} rows={rows} warnings={warnings} activeTab={activeTab} />
               )}
             </motion.div>
           )}
