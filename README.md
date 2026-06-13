@@ -341,6 +341,81 @@ vercel --prod
 
 ---
 
+## Perguntas técnicas
+
+Esta seção responde às perguntas dissertativas do processo seletivo, explicando as decisões de escalabilidade, confiabilidade e priorização do projeto.
+
+---
+
+### 1. O que quebraria se o sistema precisasse processar 1 milhão de linhas por dia, com 200 clientes simultâneos? O que você mudaria?
+
+**O que quebraria no modelo atual:**
+
+O sistema processa cada arquivo em memória dentro de uma única função serverless do Vercel, com timeout de 60 segundos. Com 200 clientes simultâneos enviando planilhas grandes, três coisas quebrariam:
+
+1. **Timeout da função** — planilhas com dezenas de milhares de linhas ultrapassariam os 60s de processamento
+2. **Rate limit da API do Claude** — a Anthropic limita requisições simultâneas; 200 uploads ao mesmo tempo causariam erros de throttling
+3. **Sem fila de prioridade** — sem mecanismo de retry, qualquer falha seria silenciosa para o usuário
+
+**O que eu mudaria:**
+
+O maior redesenho seria separar o upload do processamento usando uma fila assíncrona (por exemplo, BullMQ com Redis). O fluxo ficaria:
+
+```
+Upload CSV → Fila de jobs → Worker processa → Resultado salvo no banco → Usuário notificado
+```
+
+Para o banco, usaria o Supabase (PostgreSQL) para guardar os relatórios por usuário. Para a IA, implementaria chunking — dividir planilhas grandes em lotes de 500 linhas, analisar separado e consolidar os resultados. O frontend mostraria progresso em tempo real via Server-Sent Events (já usado no chat ao vivo) em vez de esperar a análise completa.
+
+Com isso, o sistema toleraria qualquer volume sem timeout, com fila gerenciando a carga e retry automático em caso de falha da API.
+
+---
+
+### 2. Como você garantiria que alucinações do modelo de linguagem não gerassem recomendações incorretas para os clientes?
+
+**O que já existe no sistema:**
+
+O sistema já tem duas camadas de proteção implementadas:
+
+- **Validação estrutural com Zod** — a resposta do Claude é validada campo a campo antes de ser exibida. Se o JSON estiver malformado ou com tipos errados, o sistema descarta a resposta da IA e usa análise estatística local.
+- **Fallback automático** — se a IA falhar ou retornar algo inválido, o sistema calcula as anomalias usando matemática pura (médias, desvio padrão, regras fixas) sem depender de linguagem natural.
+
+**O que eu adicionaria para maior confiabilidade:**
+
+O ponto fraco atual é que o Zod valida a *forma* da resposta, mas não o *conteúdo*. A IA poderia retornar um CPA de R$ 999 para uma campanha com CPA real de R$ 12 e o sistema exibiria sem questionar.
+
+Para resolver isso, separaria claramente o que é **fato** do que é **interpretação**:
+
+- **Fatos** (números, métricas) → sempre calculados localmente, nunca pela IA
+- **Interpretação** (por que o CPA está alto, o que fazer) → pela IA, com contexto dos números já calculados
+
+Assim, a IA receberia no prompt: *"O CPA desta campanha é R$ 88,41, 2,1x acima da média de R$ 42,10. Explique o que pode ter causado isso e o que recomenda."* A IA nunca "inventa" o número — apenas interpreta o número correto. Qualquer dado numérico no relatório viria da planilha, não do modelo.
+
+---
+
+### 3. Se você tivesse metade do tempo disponível, o que cortaria? Se tivesse o dobro, o que adicionaria?
+
+**Com metade do tempo — o que cortaria:**
+
+Manteria apenas o núcleo de valor: upload de CSV + análise com Claude + relatório na tela. Cortaria:
+
+- **Análise ao Vivo** (chat em tempo real com Meta API) — funcionalidade avançada que exigiu a maior parte do esforço de integração
+- **Suporte multi-provider de IA** (OpenAI, Gemini) — o Claude já resolve o problema principal; os outros providers são opção extra
+- **Botão de WhatsApp** — requer infraestrutura externa (Evolution API) que o cliente precisa ter
+
+Com metade do tempo, o sistema entregaria o essencial: um gestor faz upload do CSV e recebe o diagnóstico. Isso já é o valor principal do produto.
+
+**Com o dobro do tempo — o que adicionaria:**
+
+Em ordem de prioridade:
+
+1. **Testes automatizados** — Jest para a lógica de parsing e detecção de anomalias, Playwright para testes end-to-end do fluxo de upload. Hoje o sistema não tem testes, o que torna difícil refatorar com segurança.
+2. **Histórico de relatórios** — banco de dados + login com Google OAuth para o usuário acessar análises anteriores e comparar período a período.
+3. **Suporte a outras plataformas** — parser para Google Ads e TikTok Ads, que seguem estrutura parecida de CSV.
+4. **Relatórios agendados** — conexão permanente com a Meta API para enviar relatório diário automático por WhatsApp sem precisar fazer upload manual.
+
+---
+
 ## Tecnologias utilizadas
 
 | Tecnologia | Versão | Para que serve |

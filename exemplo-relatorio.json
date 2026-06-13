@@ -1,0 +1,185 @@
+{
+  "periodo_analisado": "2026-06-01 a 2026-06-07",
+  "total_campanhas": 6,
+  "total_gasto": 28302.45,
+  "roas_medio": 10.27,
+  "score_geral": 15,
+  "gerado_em": "2026-06-13T10:42:00.000Z",
+  "insight_principal": "Análise de 42 registros com 10 anomalias detectadas. A campanha Remarketing Checkout apresenta CPA de R$ 88,41, 2,1x acima da média do período. As campanhas de topo de funil (Branding e Alcance) mantêm ROAS consistente acima de 12x, enquanto as campanhas de fundo de funil operam com eficiência abaixo do esperado. Recomenda-se revisão imediata dos criativos do Remarketing Checkout e redistribuição de verba para as campanhas com ROAS superior.",
+  "anomalias": [
+    {
+      "id": "anomaly-001",
+      "campanha": "Remarketing Checkout",
+      "metrica": "CPA",
+      "severidade": "alta",
+      "descricao": "CPA de R$ 88,41 está 2,1x acima da média do objetivo (R$ 42,10). Possível fadiga de criativo ou público saturado.",
+      "recomendacao": "Revisar criativos ativos e testar novos ângulos de oferta. Verificar frequência da campanha — se acima de 5, pausar e renovar os anúncios.",
+      "valor_atual": 88.41,
+      "valor_referencia": 42.10
+    },
+    {
+      "id": "anomaly-002",
+      "campanha": "Leads Formulário",
+      "metrica": "ROAS",
+      "severidade": "alta",
+      "descricao": "ROAS de 1,2x em campanha de vendas. Cada R$ 1,00 investido retorna apenas R$ 1,20 — abaixo do mínimo viável de 1,5x.",
+      "recomendacao": "Avaliar se o público-alvo está alinhado com o produto. Testar segmentação por lookalike de compradores recentes. Considerar pausa temporária até revisão de estratégia.",
+      "valor_atual": 1.2,
+      "valor_referencia": 1.5
+    },
+    {
+      "id": "anomaly-003",
+      "campanha": "Prospecto Frio",
+      "metrica": "CTR",
+      "severidade": "media",
+      "descricao": "CTR de 0,31% com 45.230 impressões. Abaixo do benchmark de 0,5% para campanhas de prospecção.",
+      "recomendacao": "Testar novos formatos de criativo (vídeo curto ou carrossel). Revisar copy do anúncio e chamada para ação. Verificar relevância do público selecionado.",
+      "valor_atual": 0.31,
+      "valor_referencia": 0.5
+    },
+    {
+      "id": "anomaly-004",
+      "campanha": "Remarketing Checkout",
+      "metrica": "Frequência",
+      "severidade": "media",
+      "descricao": "Frequência de 7,8 indica saturação do público. Usuários estão vendo o mesmo anúncio em média quase 8 vezes.",
+      "recomendacao": "Expandir o tamanho do público-alvo ou adicionar novos criativos para rotação. Aumentar intervalo entre exibições no nível do conjunto de anúncios.",
+      "valor_atual": 7.8,
+      "valor_referencia": 5.0
+    },
+    {
+      "id": "anomaly-005",
+      "campanha": "Branding Awareness",
+      "metrica": "Gasto sem conversão",
+      "severidade": "alta",
+      "descricao": "R$ 3.240 investidos (22% do budget total) sem nenhuma compra registrada nos últimos 3 dias.",
+      "recomendacao": "Verificar rastreamento de pixel — pode haver problema na configuração do evento de conversão. Confirmar se o objetivo da campanha está alinhado com compra ou apenas com alcance.",
+      "valor_atual": 3240.00,
+      "valor_referencia": 0
+    },
+    {
+      "id": "anomaly-006",
+      "campanha": "Prospecto Frio",
+      "metrica": "Queda de CTR",
+      "severidade": "alta",
+      "descricao": "Queda de 41% no CTR nos últimos 3 dias (de 0,52% para 0,31%). Degradação acelerada de performance.",
+      "recomendacao": "Rotacionar criativos imediatamente. O público pode estar exausto com a mensagem atual. Testar variações com prova social (depoimentos, números de clientes).",
+      "valor_atual": 0.31,
+      "valor_referencia": 0.52
+    },
+    {
+      "id": "anomaly-007",
+      "campanha": "Vendas Diretas",
+      "metrica": "CPA",
+      "severidade": "media",
+      "descricao": "CPA de R$ 56,20 está 33% acima da meta definida de R$ 42,10.",
+      "recomendacao": "Otimizar o funil de conversão da landing page. Verificar se o público está qualificado. Testar estratégias de lance mais conservadoras (CBO vs ABO).",
+      "valor_atual": 56.20,
+      "valor_referencia": 42.10
+    },
+    {
+      "id": "anomaly-008",
+      "campanha": "Leads Formulário",
+      "metrica": "CTR",
+      "severidade": "baixa",
+      "descricao": "CTR de 0,48% — levemente abaixo do benchmark de 0,5%, mas ainda dentro da margem aceitável.",
+      "recomendacao": "Monitorar por mais 48 horas antes de tomar ação. Se continuar caindo, considerar novo teste A/B de criativo.",
+      "valor_atual": 0.48,
+      "valor_referencia": 0.5
+    },
+    {
+      "id": "anomaly-009",
+      "campanha": "Remarketing Carrinho",
+      "metrica": "ROAS",
+      "severidade": "baixa",
+      "descricao": "ROAS de 2,1x — acima do mínimo de 1,5x, mas abaixo do ROAS médio da conta de 10,27x.",
+      "recomendacao": "Avaliar se o público de remarketing de carrinho está corretamente segmentado. Testar mensagem com urgência (oferta por tempo limitado) para aumentar conversão.",
+      "valor_atual": 2.1,
+      "valor_referencia": 10.27
+    },
+    {
+      "id": "anomaly-010",
+      "campanha": "Branding Awareness",
+      "metrica": "Frequência",
+      "severidade": "baixa",
+      "descricao": "Frequência de 5,2 está próxima ao limite de fadiga (5,0). Monitorar nas próximas 48h.",
+      "recomendacao": "Preparar novos criativos para rotação preventiva. Considerar expansão do público-alvo para aliviar pressão de frequência.",
+      "valor_atual": 5.2,
+      "valor_referencia": 5.0
+    }
+  ],
+  "metricas_por_campanha": [
+    {
+      "campanha": "Branding Awareness",
+      "gasto": 3240.00,
+      "impressoes": 182400,
+      "cliques": 820,
+      "ctr": 0.45,
+      "roas": 0,
+      "compras": 0,
+      "frequencia": 5.2,
+      "cpa": null
+    },
+    {
+      "campanha": "Prospecto Frio",
+      "gasto": 4180.30,
+      "impressoes": 45230,
+      "cliques": 140,
+      "ctr": 0.31,
+      "roas": 8.4,
+      "compras": 48,
+      "frequencia": 3.1,
+      "cpa": 87.09
+    },
+    {
+      "campanha": "Vendas Diretas",
+      "gasto": 6820.50,
+      "impressoes": 38900,
+      "cliques": 1245,
+      "ctr": 3.2,
+      "roas": 14.2,
+      "compras": 121,
+      "frequencia": 2.8,
+      "cpa": 56.37
+    },
+    {
+      "campanha": "Remarketing Carrinho",
+      "gasto": 5240.75,
+      "impressoes": 19800,
+      "cliques": 980,
+      "ctr": 4.95,
+      "roas": 2.1,
+      "compras": 32,
+      "frequencia": 4.1,
+      "cpa": 163.77
+    },
+    {
+      "campanha": "Remarketing Checkout",
+      "gasto": 4380.90,
+      "impressoes": 12600,
+      "cliques": 756,
+      "ctr": 6.0,
+      "roas": 4.3,
+      "compras": 49,
+      "frequencia": 7.8,
+      "cpa": 89.41
+    },
+    {
+      "campanha": "Leads Formulário",
+      "gasto": 4440.00,
+      "impressoes": 28000,
+      "cliques": 1344,
+      "ctr": 0.48,
+      "roas": 1.2,
+      "compras": 18,
+      "frequencia": 2.3,
+      "cpa": 246.67
+    }
+  ],
+  "resumo_anomalias": {
+    "total": 10,
+    "alta": 5,
+    "media": 3,
+    "baixa": 2
+  }
+}
