@@ -28,16 +28,21 @@ export class ClaudeProvider implements AIProvider {
     }
   }
 
-  async testConnection(): Promise<boolean> {
+  async testConnection(): Promise<{ ok: boolean; error?: string }> {
     try {
       await this.client.messages.create({
         model: this.model,
         max_tokens: 10,
         messages: [{ role: 'user', content: 'ping' }],
       })
-      return true
-    } catch {
-      return false
+      return { ok: true }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      if (msg.includes('credit') || msg.includes('balance') || msg.includes('billing'))
+        return { ok: false, error: 'Saldo insuficiente. Adicione créditos em console.anthropic.com/settings/billing' }
+      if (msg.includes('auth') || msg.includes('401') || msg.includes('invalid'))
+        return { ok: false, error: 'Chave de API inválida. Verifique a chave em console.anthropic.com' }
+      return { ok: false, error: msg }
     }
   }
 }

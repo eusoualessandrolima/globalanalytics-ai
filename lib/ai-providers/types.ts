@@ -5,5 +5,5 @@ export interface AIMessage {
 
 export interface AIProvider {
   chat(messages: AIMessage[], onChunk: (chunk: string) => void): Promise<void>
-  testConnection(): Promise<boolean>
+  testConnection(): Promise<{ ok: boolean; error?: string }>
 }

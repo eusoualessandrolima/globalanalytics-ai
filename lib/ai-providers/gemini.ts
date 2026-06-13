@@ -49,14 +49,18 @@ export class GeminiProvider implements AIProvider {
     }
   }
 
-  async testConnection(): Promise<boolean> {
+  async testConnection(): Promise<{ ok: boolean; error?: string }> {
     try {
       const res = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models?key=${this.apiKey}`
       )
-      return res.ok
-    } catch {
-      return false
+      if (res.ok) return { ok: true }
+      const body = await res.json().catch(() => ({}))
+      const msg = body?.error?.message ?? `Erro ${res.status}`
+      if (res.status === 400 || res.status === 403) return { ok: false, error: 'Chave de API inválida.' }
+      return { ok: false, error: msg }
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : 'Erro de rede.' }
     }
   }
 }

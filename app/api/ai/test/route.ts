@@ -11,8 +11,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'API Key não fornecida' }, { status: 400 })
     }
     const provider = createAIProvider(settings)
-    const ok = await provider.testConnection()
-    return NextResponse.json({ success: ok, error: ok ? undefined : 'Conexão falhou' })
+    const result = await provider.testConnection()
+    return NextResponse.json({ success: result.ok, error: result.error })
   } catch (err) {
     return NextResponse.json({ success: false, error: err instanceof Error ? err.message : 'Erro' }, { status: 500 })
   }

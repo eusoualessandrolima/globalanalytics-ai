@@ -215,6 +215,18 @@ export default function SettingsPage() {
                   className="w-full py-2.5 rounded-xl border border-indigo-500/30 text-indigo-400 text-sm font-medium hover:bg-indigo-500/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
                   {aiStatus === 'testing' ? 'Testando...' : 'Testar Conexão'}
                 </button>
+
+                {aiStatus === 'error' && aiError && (
+                  <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
+                    <p className="text-red-400 text-xs leading-relaxed">{aiError}</p>
+                    {aiError.includes('créditos') || aiError.includes('billing') ? (
+                      <a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noreferrer"
+                        className="text-blue-400 text-xs underline underline-offset-2 mt-1 inline-block">
+                        Adicionar créditos →
+                      </a>
+                    ) : null}
+                  </div>
+                )}
               </div>
             </motion.div>
 

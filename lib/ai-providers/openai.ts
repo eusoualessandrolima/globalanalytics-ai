@@ -48,14 +48,19 @@ export class OpenAIProvider implements AIProvider {
     }
   }
 
-  async testConnection(): Promise<boolean> {
+  async testConnection(): Promise<{ ok: boolean; error?: string }> {
     try {
       const res = await fetch('https://api.openai.com/v1/models', {
         headers: { 'Authorization': `Bearer ${this.apiKey}` },
       })
-      return res.ok
-    } catch {
-      return false
+      if (res.ok) return { ok: true }
+      const body = await res.json().catch(() => ({}))
+      const msg = body?.error?.message ?? `Erro ${res.status}`
+      if (res.status === 401) return { ok: false, error: 'Chave de API inválida.' }
+      if (res.status === 429) return { ok: false, error: 'Limite de uso atingido ou saldo insuficiente.' }
+      return { ok: false, error: msg }
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : 'Erro de rede.' }
     }
   }
 }
