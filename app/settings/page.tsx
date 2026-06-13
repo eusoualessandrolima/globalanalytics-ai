@@ -12,7 +12,7 @@ const DEFAULT_SETTINGS: AppSettings = {
 
 const AI_MODELS: Record<AIProviderType, { label: string; models: { id: string; name: string }[] }> = {
   claude: { label: 'Claude (Anthropic)', models: [{ id: 'claude-sonnet-4-6', name: 'Claude Sonnet 4.6' }, { id: 'claude-opus-4-7', name: 'Claude Opus 4.7' }] },
-  openai: { label: 'OpenAI', models: [{ id: 'gpt-4o', name: 'GPT-4o' }, { id: 'gpt-4o-mini', name: 'GPT-4o Mini' }] },
+  openai: { label: 'OpenAI', models: [{ id: 'gpt-4.1', name: 'GPT-4.1' }, { id: 'gpt-4.1-mini', name: 'GPT-4.1 Mini' }, { id: 'gpt-4.1-nano', name: 'GPT-4.1 Nano' }, { id: 'gpt-4o', name: 'GPT-4o' }, { id: 'gpt-4o-mini', name: 'GPT-4o Mini' }] },
   gemini: { label: 'Google Gemini', models: [{ id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash' }, { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro' }] },
 }
 
