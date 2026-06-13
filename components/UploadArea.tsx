@@ -64,7 +64,7 @@ export default function UploadArea({ onFileSelect, isLoading }: UploadAreaProps)
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500" />
             </span>
-            Marketing Intelligence Platform
+            Plataforma de Marketing Intelligence
           </motion.div>
 
           <motion.h1

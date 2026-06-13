@@ -5,14 +5,14 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 
 const navItems = [
-  { id: 'upload', label: 'Import Data', icon: Upload, desc: 'Upload CSV', href: '/' },
-  { id: 'report', label: 'Intelligence', icon: TrendingUp, desc: 'Executive report', href: '/' },
-  { id: 'anomalies', label: 'Anomalias', icon: Zap, desc: 'Detected issues', href: '/' },
+  { id: 'upload', label: 'Importar Dados', icon: Upload, desc: 'Enviar CSV', href: '/' },
+  { id: 'report', label: 'Intelligence', icon: TrendingUp, desc: 'Relatório Executivo', href: '/' },
+  { id: 'anomalies', label: 'Anomalias', icon: Zap, desc: 'Problemas Detectados', href: '/' },
 ]
 
 const navItemsNew = [
   { label: 'Análise ao Vivo', icon: Bot, desc: 'IA + Meta Ads', href: '/live' },
-  { label: 'Configurações', icon: Settings, desc: 'API Keys & Integrações', href: '/settings' },
+  { label: 'Configurações', icon: Settings, desc: 'Chaves de API & Integrações', href: '/settings' },
 ]
 
 interface SidebarProps {
@@ -44,7 +44,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
           </span>
-          <span className="text-emerald-400 text-xs font-medium">Analytics Engine Online</span>
+          <span className="text-emerald-400 text-xs font-medium">Sistema de Análise Ativo</span>
         </div>
       </div>
 
@@ -108,7 +108,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
               </div>
               {isActive && <div className="w-1 h-4 rounded-full bg-blue-500" />}
               {label === 'Análise ao Vivo' && (
-                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">NEW</span>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">NOVO</span>
               )}
             </Link>
           )
@@ -123,7 +123,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
           </div>
           <div>
             <p className="text-xs font-medium text-white/70">Marketing Intelligence</p>
-            <p className="text-[10px] text-white/30">Platform v1.0</p>
+            <p className="text-[10px] text-white/30">Plataforma v1.0</p>
           </div>
         </div>
       </div>
